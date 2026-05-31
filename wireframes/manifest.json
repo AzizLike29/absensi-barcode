@@ -1,0 +1,62 @@
+[
+  {
+    "name": "01-index.svg",
+    "title": "Landing Page",
+    "file": "index.html"
+  },
+  {
+    "name": "02-login.svg",
+    "title": "Login",
+    "file": "login.html"
+  },
+  {
+    "name": "03-otp.svg",
+    "title": "Verifikasi OTP",
+    "file": "otp.html"
+  },
+  {
+    "name": "04-dashboard.svg",
+    "title": "Dashboard Karyawan",
+    "file": "dashboard.html"
+  },
+  {
+    "name": "05-absensi.svg",
+    "title": "Absensi Face Recognition",
+    "file": "absensi.html"
+  },
+  {
+    "name": "06-riwayat.svg",
+    "title": "Riwayat Absensi",
+    "file": "riwayat.html"
+  },
+  {
+    "name": "07-cuti.svg",
+    "title": "Cuti & Izin",
+    "file": "cuti.html"
+  },
+  {
+    "name": "08-profil.svg",
+    "title": "Profil Karyawan",
+    "file": "profil.html"
+  },
+  {
+    "name": "09-admin-dashboard.svg",
+    "title": "Dashboard HR Admin",
+    "file": "admin-dashboard.html"
+  },
+  {
+    "name": "10-admin-karyawan.svg",
+    "title": "Data Karyawan",
+    "file": "admin-karyawan.html"
+  },
+  {
+    "name": "11-admin-lokasi.svg",
+    "title": "Titik Lokasi Absensi",
+    "file": "admin-lokasi.html"
+  },
+  {
+    "name": "12-admin-rekap.svg",
+    "title": "Rekap & Laporan",
+    "file": "admin-rekap.html"
+  }
+]
