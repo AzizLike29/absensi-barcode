@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard · WinniPresence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="assets/js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="assets/css/app.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script src="assets/js/icons.js"></script>
+  <script src="assets/js/data.js"></script>
+</head>
+<body class="h-full bg-slate-50 font-sans text-slate-800" x-data="{ sidebarOpen: false }">
+  <div id="overlay-slot"></div>
+  <div id="sidebar-slot"></div>
+
+  <div class="lg:pl-72">
+    <div id="topbar-slot"></div>
+
+    <main class="p-4 sm:p-6 space-y-6">
+      <!-- Hero / clock card -->
+      <section class="grid lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 relative overflow-hidden rounded-3xl bg-brand-700 text-white p-6 sm:p-8 shadow-soft"
+             x-data="{ now: '' }" x-init="now = new Date().toLocaleTimeString('id-ID'); setInterval(() => now = new Date().toLocaleTimeString('id-ID'), 1000)">
+          <div class="absolute -top-20 -right-16 w-72 h-72 rounded-full bg-brand-500/30 blur-2xl"></div>
+          <div class="relative">
+            <p class="text-brand-100 text-sm">Halo, selamat datang 👋</p>
+            <h2 class="mt-1 text-2xl font-bold" id="hero-name"></h2>
+            <p class="text-brand-100 text-sm" id="hero-role"></p>
+            <div class="mt-6 flex items-end gap-6">
+              <div>
+                <p class="text-4xl font-extrabold tabular-nums" x-text="now"></p>
+                <p class="text-brand-100 text-sm mt-1" id="hero-date"></p>
+              </div>
+            </div>
+            <div class="mt-6 flex flex-wrap gap-3">
+              <a href="absensi.html" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white text-brand-700 text-sm font-semibold shadow-soft hover:bg-brand-50 transition">
+                <span id="cta-cam"></span> Absen Sekarang
+              </a>
+              <a href="cuti.html" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/15 text-white text-sm font-semibold hover:bg-white/25 transition">
+                <span id="cta-doc"></span> Ajukan Cuti
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Today's status -->
+        <div class="rounded-3xl bg-white border border-slate-100 p-6 shadow-card">
+          <p class="text-sm font-semibold text-slate-700">Status Hari Ini</p>
+          <div class="mt-4 space-y-3" id="today-slot"></div>
+        </div>
+      </section>
+
+      <!-- Stat cards -->
+      <section class="grid grid-cols-2 lg:grid-cols-4 gap-4" id="stats-slot"></section>
+
+      <!-- Recent history + leave summary -->
+      <section class="grid lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 rounded-3xl bg-white border border-slate-100 shadow-card overflow-hidden">
+          <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+            <p class="font-semibold text-slate-800">Riwayat Absensi Terbaru</p>
+            <a href="riwayat.html" class="text-sm font-medium text-brand-600 hover:text-brand-700">Lihat semua</a>
+          </div>
+          <div class="overflow-x-auto scroll-thin">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="text-left text-slate-400 border-b border-slate-100">
+                  <th class="px-6 py-3 font-medium">Tanggal</th>
+                  <th class="px-6 py-3 font-medium">Masuk</th>
+                  <th class="px-6 py-3 font-medium">Keluar</th>
+                  <th class="px-6 py-3 font-medium">Status</th>
+                </tr>
+              </thead>
+              <tbody id="recent-slot" class="divide-y divide-slate-50"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="rounded-3xl bg-white border border-slate-100 shadow-card p-6">
+          <p class="font-semibold text-slate-800">Ringkasan Cuti</p>
+          <div class="mt-5 flex items-center justify-center">
+            <div class="relative w-36 h-36">
+              <svg viewBox="0 0 36 36" class="w-full h-full -rotate-90">
+                <circle cx="18" cy="18" r="15.5" fill="none" stroke="#eef2f7" stroke-width="4"/>
+                <circle cx="18" cy="18" r="15.5" fill="none" stroke="#1d40f5" stroke-width="4"
+                        stroke-dasharray="97.4" stroke-dashoffset="38" stroke-linecap="round"/>
+              </svg>
+              <div class="absolute inset-0 grid place-items-center text-center">
+                <div>
+                  <p class="text-2xl font-bold text-slate-800">6</p>
+                  <p class="text-xs text-slate-400">dari 12 hari</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-5 space-y-2 text-sm">
+            <div class="flex items-center justify-between">
+              <span class="text-slate-500">Cuti terpakai</span><span class="font-semibold text-slate-700">6 hari</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-slate-500">Sisa cuti</span><span class="font-semibold text-emerald-600">6 hari</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-slate-500">Pengajuan menunggu</span><span class="font-semibold text-amber-600">1</span>
+            </div>
+          </div>
+          <a href="cuti.html" class="mt-5 block text-center py-2.5 rounded-xl border border-slate-200 text-sm font-medium text-slate-600 hover:bg-slate-50 transition">Kelola Cuti & Izin</a>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="assets/js/layout.js"></script>
+  <script>
+    window.PAGE = { role: 'karyawan', active: 'dashboard', title: 'Dashboard', subtitle: 'Ringkasan kehadiran dan aktivitas Anda' };
+    renderShell();
+
+    // Hero details.
+    document.getElementById('hero-name').textContent = APP.currentUser.name;
+    document.getElementById('hero-role').textContent = APP.currentUser.role + ' · ' + APP.currentUser.department;
+    document.getElementById('hero-date').textContent = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    document.getElementById('cta-cam').innerHTML = icon('camera', 'w-5 h-5');
+    document.getElementById('cta-doc').innerHTML = icon('document', 'w-5 h-5');
+
+    // Today status rows.
+    const t = APP.today;
+    document.getElementById('today-slot').innerHTML = [
+      ['clock', 'Jam Masuk', t.checkIn, 'text-emerald-600'],
+      ['clock', 'Jam Keluar', t.checkOut, 'text-slate-400'],
+      ['pin', 'Lokasi', t.location, 'text-slate-700'],
+      ['calendar', 'Shift', t.shift, 'text-slate-700'],
+    ].map(([ic, label, val, color]) => `
+      <div class="flex items-center gap-3">
+        <span class="w-9 h-9 rounded-xl bg-slate-50 text-slate-400 grid place-items-center">${icon(ic, 'w-4 h-4')}</span>
+        <div class="flex-1">
+          <p class="text-xs text-slate-400">${label}</p>
+          <p class="text-sm font-semibold ${color}">${val}</p>
+        </div>
+      </div>`).join('') +
+      `<div class="pt-2"><span class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ring-1 ring-inset ${statusBadge(t.status)}">${t.status}</span></div>`;
+
+    // Stat cards.
+    const stats = [
+      { icon: 'check', label: 'Hadir Bulan Ini', value: '21', sub: 'hari', color: 'emerald' },
+      { icon: 'clock', label: 'Terlambat', value: '2', sub: 'kali', color: 'amber' },
+      { icon: 'document', label: 'Izin / Sakit', value: '3', sub: 'hari', color: 'sky' },
+      { icon: 'chart', label: 'Kehadiran', value: '96%', sub: 'rata-rata', color: 'brand' },
+    ];
+    const colorMap = {
+      emerald: 'bg-emerald-50 text-emerald-600',
+      amber: 'bg-amber-50 text-amber-600',
+      sky: 'bg-sky-50 text-sky-600',
+      brand: 'bg-brand-50 text-brand-600',
+    };
+    document.getElementById('stats-slot').innerHTML = stats.map((s) => `
+      <div class="rounded-2xl bg-white border border-slate-100 p-5 shadow-card">
+        <span class="w-10 h-10 rounded-xl grid place-items-center ${colorMap[s.color]}">${icon(s.icon, 'w-5 h-5')}</span>
+        <p class="mt-4 text-2xl font-bold text-slate-800">${s.value} <span class="text-sm font-medium text-slate-400">${s.sub}</span></p>
+        <p class="text-xs text-slate-400 mt-0.5">${s.label}</p>
+      </div>`).join('');
+
+    // Recent history (latest 5).
+    document.getElementById('recent-slot').innerHTML = APP.history.slice(0, 5).map((h) => `
+      <tr class="hover:bg-slate-50">
+        <td class="px-6 py-3">
+          <p class="font-medium text-slate-700">${fmtDate(h.date)}</p>
+          <p class="text-xs text-slate-400">${h.day}</p>
+        </td>
+        <td class="px-6 py-3 tabular-nums text-slate-600">${h.in}</td>
+        <td class="px-6 py-3 tabular-nums text-slate-600">${h.out}</td>
+        <td class="px-6 py-3"><span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ring-inset ${statusBadge(h.status)}">${h.status}</span></td>
+      </tr>`).join('');
+  </script>
+</body>
+</html>

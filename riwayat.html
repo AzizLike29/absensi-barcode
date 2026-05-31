@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Riwayat Absensi · WinniPresence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="assets/js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="assets/css/app.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script src="assets/js/icons.js"></script>
+  <script src="assets/js/data.js"></script>
+</head>
+<body class="h-full bg-slate-50 font-sans text-slate-800" x-data="{ sidebarOpen: false }">
+  <div id="overlay-slot"></div>
+  <div id="sidebar-slot"></div>
+
+  <div class="lg:pl-72">
+    <div id="topbar-slot"></div>
+
+    <main class="p-4 sm:p-6 space-y-6" x-data="riwayat()">
+      <!-- Summary chips -->
+      <section class="grid grid-cols-2 sm:grid-cols-4 gap-4" id="sum-slot"></section>
+
+      <!-- Filters + table -->
+      <section class="rounded-3xl bg-white border border-slate-100 shadow-card overflow-hidden">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-6 py-4 border-b border-slate-100">
+          <p class="font-semibold text-slate-800">Riwayat Kehadiran</p>
+          <div class="flex flex-wrap items-center gap-2">
+            <div class="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-50 text-slate-400">
+              <span x-html="icon('calendar','w-4 h-4')"></span>
+              <input type="month" value="2026-05" class="bg-transparent text-sm text-slate-600 focus:outline-none" />
+            </div>
+            <select x-model="filter" class="px-3 py-2 rounded-xl bg-slate-50 text-sm text-slate-600 focus:outline-none">
+              <option value="all">Semua Status</option>
+              <option value="Hadir">Hadir</option>
+              <option value="Terlambat">Terlambat</option>
+              <option value="Izin">Izin</option>
+              <option value="Sakit">Sakit</option>
+            </select>
+            <button class="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium transition">
+              <span x-html="icon('download','w-4 h-4')"></span> Ekspor
+            </button>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto scroll-thin">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="text-left text-slate-400 border-b border-slate-100">
+                <th class="px-6 py-3 font-medium">Tanggal</th>
+                <th class="px-6 py-3 font-medium">Hari</th>
+                <th class="px-6 py-3 font-medium">Masuk</th>
+                <th class="px-6 py-3 font-medium">Keluar</th>
+                <th class="px-6 py-3 font-medium">Durasi</th>
+                <th class="px-6 py-3 font-medium">Status</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-50">
+              <template x-for="h in filtered" :key="h.date">
+                <tr class="hover:bg-slate-50">
+                  <td class="px-6 py-3.5 font-medium text-slate-700" x-text="fmtDate(h.date)"></td>
+                  <td class="px-6 py-3.5 text-slate-500" x-text="h.day"></td>
+                  <td class="px-6 py-3.5 tabular-nums text-slate-600" x-text="h.in"></td>
+                  <td class="px-6 py-3.5 tabular-nums text-slate-600" x-text="h.out"></td>
+                  <td class="px-6 py-3.5 tabular-nums text-slate-500" x-text="duration(h)"></td>
+                  <td class="px-6 py-3.5">
+                    <span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ring-inset" :class="statusBadge(h.status)" x-text="h.status"></span>
+                  </td>
+                </tr>
+              </template>
+              <tr x-show="filtered.length === 0">
+                <td colspan="6" class="px-6 py-10 text-center text-slate-400">Tidak ada data untuk filter ini.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="assets/js/layout.js"></script>
+  <script>
+    window.PAGE = { role: 'karyawan', active: 'riwayat', title: 'Riwayat Absensi', subtitle: 'Rekam jejak kehadiran Anda' };
+    renderShell();
+
+    // Summary chips.
+    const sum = [
+      { label: 'Hadir', value: APP.history.filter(h => h.status === 'Hadir').length, color: 'emerald' },
+      { label: 'Terlambat', value: APP.history.filter(h => h.status === 'Terlambat').length, color: 'amber' },
+      { label: 'Izin', value: APP.history.filter(h => h.status === 'Izin').length, color: 'sky' },
+      { label: 'Sakit', value: APP.history.filter(h => h.status === 'Sakit').length, color: 'violet' },
+    ];
+    const cmap = { emerald: 'text-emerald-600 bg-emerald-50', amber: 'text-amber-600 bg-amber-50', sky: 'text-sky-600 bg-sky-50', violet: 'text-violet-600 bg-violet-50' };
+    document.getElementById('sum-slot').innerHTML = sum.map(s => `
+      <div class="rounded-2xl bg-white border border-slate-100 p-5 shadow-card">
+        <div class="flex items-center justify-between">
+          <p class="text-sm text-slate-400">${s.label}</p>
+          <span class="w-2.5 h-2.5 rounded-full ${cmap[s.color].split(' ')[0].replace('text','bg')}"></span>
+        </div>
+        <p class="mt-2 text-3xl font-bold text-slate-800">${s.value}</p>
+        <p class="text-xs text-slate-400">hari bulan ini</p>
+      </div>`).join('');
+
+    function riwayat() {
+      return {
+        filter: 'all',
+        get filtered() {
+          return this.filter === 'all' ? APP.history : APP.history.filter(h => h.status === this.filter);
+        },
+        duration(h) {
+          if (h.in === '--:--' || h.out === '--:--') return '—';
+          const [ih, im] = h.in.split(':').map(Number);
+          const [oh, om] = h.out.split(':').map(Number);
+          let mins = (oh * 60 + om) - (ih * 60 + im);
+          const hh = Math.floor(mins / 60), mm = mins % 60;
+          return `${hh}j ${mm}m`;
+        },
+      };
+    }
+  </script>
+</body>
+</html>

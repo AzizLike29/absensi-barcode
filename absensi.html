@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Absensi · WinniPresence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="assets/js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="assets/css/app.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script src="assets/js/icons.js"></script>
+  <script src="assets/js/data.js"></script>
+</head>
+<body class="h-full bg-slate-50 font-sans text-slate-800" x-data="{ sidebarOpen: false }">
+  <div id="overlay-slot"></div>
+  <div id="sidebar-slot"></div>
+
+  <div class="lg:pl-72">
+    <div id="topbar-slot"></div>
+
+    <main class="p-4 sm:p-6">
+      <div class="grid lg:grid-cols-3 gap-6" x-data="absensi()">
+        <!-- Camera / face scan -->
+        <div class="lg:col-span-2 rounded-3xl bg-white border border-slate-100 shadow-card p-6 sm:p-8">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="font-semibold text-slate-800">Absensi Face Recognition</p>
+              <p class="text-sm text-slate-400">Posisikan wajah di dalam lingkaran lalu mulai pindai.</p>
+            </div>
+            <span class="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1 rounded-full"
+                  :class="mode === 'in' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'">
+              <span class="w-1.5 h-1.5 rounded-full" :class="mode === 'in' ? 'bg-emerald-500' : 'bg-amber-500'"></span>
+              <span x-text="mode === 'in' ? 'Absen Masuk' : 'Absen Keluar'"></span>
+            </span>
+          </div>
+
+          <!-- Mode toggle -->
+          <div class="mt-5 grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-xl max-w-xs">
+            <button @click="mode = 'in'" :class="mode === 'in' ? 'bg-white shadow-card text-brand-700' : 'text-slate-500'" class="py-2 rounded-lg text-sm font-medium transition">Masuk</button>
+            <button @click="mode = 'out'" :class="mode === 'out' ? 'bg-white shadow-card text-brand-700' : 'text-slate-500'" class="py-2 rounded-lg text-sm font-medium transition">Keluar</button>
+          </div>
+
+          <!-- Scan area -->
+          <div class="mt-6 flex flex-col items-center">
+            <div class="relative w-64 h-64 sm:w-72 sm:h-72 rounded-full grid place-items-center
+                        bg-gradient-to-b from-slate-100 to-slate-200 overflow-hidden"
+                 :class="scanning ? 'scan-pulse' : ''">
+              <!-- Idle face placeholder -->
+              <div x-show="state === 'idle'" class="text-slate-400 flex flex-col items-center gap-2">
+                <span x-html="icon('camera','w-16 h-16')"></span>
+                <span class="text-xs">Kamera nonaktif</span>
+              </div>
+              <!-- Scanning -->
+              <template x-if="state === 'scanning'">
+                <div class="absolute inset-0">
+                  <div class="absolute inset-0 bg-brand-900/5"></div>
+                  <div class="absolute left-0 right-0 h-1 bg-brand-500/70 shadow-[0_0_12px_2px_rgba(53,99,255,0.6)]"
+                       :style="`top:${scanLine}%`"></div>
+                  <div class="absolute inset-0 grid place-items-center text-brand-700">
+                    <span x-html="icon('user','w-24 h-24 opacity-40')"></span>
+                  </div>
+                </div>
+              </template>
+              <!-- Success -->
+              <div x-cloak x-show="state === 'success'" class="absolute inset-0 grid place-items-center bg-emerald-50">
+                <span class="text-emerald-500" x-html="icon('check','w-24 h-24')"></span>
+              </div>
+              <!-- Dashed ring frame -->
+              <div class="absolute inset-3 rounded-full border-2 border-dashed border-white/70 pointer-events-none"></div>
+            </div>
+
+            <p class="mt-5 text-sm font-medium" :class="{
+                'text-slate-500': state === 'idle',
+                'text-brand-600': state === 'scanning',
+                'text-emerald-600': state === 'success'
+              }" x-text="statusText"></p>
+
+            <button @click="start()" x-show="state !== 'success'"
+              :disabled="scanning"
+              class="mt-5 px-6 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 disabled:opacity-60 text-white text-sm font-semibold shadow-soft transition inline-flex items-center gap-2">
+              <span x-html="icon('camera','w-5 h-5')"></span>
+              <span x-text="scanning ? 'Memindai...' : 'Mulai Pindai Wajah'"></span>
+            </button>
+            <a x-cloak x-show="state === 'success'" href="dashboard.html"
+              class="mt-5 px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold shadow-soft transition inline-flex items-center gap-2">
+              <span x-html="icon('check','w-5 h-5')"></span> Selesai, ke Dashboard
+            </a>
+          </div>
+        </div>
+
+        <!-- Validation panel (matches flow: validate data + GPS + face) -->
+        <div class="space-y-6">
+          <div class="rounded-3xl bg-white border border-slate-100 shadow-card p-6">
+            <p class="font-semibold text-slate-800">Validasi Kehadiran</p>
+            <p class="text-sm text-slate-400 mt-0.5">Sistem memeriksa data berikut.</p>
+            <div class="mt-4 space-y-3">
+              <template x-for="c in checks" :key="c.key">
+                <div class="flex items-center gap-3">
+                  <span class="w-9 h-9 rounded-xl grid place-items-center transition"
+                        :class="c.ok ? 'bg-emerald-50 text-emerald-600' : (scanning ? 'bg-brand-50 text-brand-500' : 'bg-slate-50 text-slate-300')"
+                        x-html="icon(c.icon,'w-4 h-4')"></span>
+                  <div class="flex-1">
+                    <p class="text-sm font-medium text-slate-700" x-text="c.label"></p>
+                    <p class="text-xs" :class="c.ok ? 'text-emerald-600' : 'text-slate-400'" x-text="c.ok ? c.done : c.pending"></p>
+                  </div>
+                  <span x-show="c.ok" class="text-emerald-500" x-html="icon('check','w-5 h-5')"></span>
+                </div>
+              </template>
+            </div>
+          </div>
+
+          <div class="rounded-3xl bg-white border border-slate-100 shadow-card p-6">
+            <p class="font-semibold text-slate-800">Lokasi Anda</p>
+            <div class="mt-3 rounded-2xl overflow-hidden border border-slate-100">
+              <div class="relative h-36 bg-gradient-to-br from-brand-100 to-sky-100">
+                <div class="absolute inset-0 opacity-40"
+                     style="background-image:linear-gradient(#cbd5e1 1px,transparent 1px),linear-gradient(90deg,#cbd5e1 1px,transparent 1px);background-size:22px 22px"></div>
+                <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-brand-600" x-html="icon('pin','w-9 h-9')"></div>
+                <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full bg-brand-500/20 animate-ping"></div>
+              </div>
+            </div>
+            <div class="mt-3 flex items-start gap-2 text-sm">
+              <span class="text-emerald-500 mt-0.5" x-html="icon('check','w-4 h-4')"></span>
+              <p class="text-slate-600">Anda berada dalam radius <span class="font-semibold">Kantor Pusat - Jakarta</span> (±35 m).</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="assets/js/layout.js"></script>
+  <script>
+    window.PAGE = { role: 'karyawan', active: 'absensi', title: 'Absensi', subtitle: 'Verifikasi wajah & lokasi untuk mencatat kehadiran' };
+    renderShell();
+
+    function absensi() {
+      return {
+        mode: 'in',
+        state: 'idle', // idle | scanning | success
+        scanning: false,
+        scanLine: 0,
+        checks: [
+          { key: 'data', icon: 'user', label: 'Data Karyawan', pending: 'Menunggu', done: 'NIP ' + APP.currentUser.nip, ok: false },
+          { key: 'gps', icon: 'pin', label: 'Lokasi GPS', pending: 'Menunggu', done: 'Dalam radius kantor', ok: false },
+          { key: 'face', icon: 'camera', label: 'Pengenalan Wajah', pending: 'Menunggu', done: 'Wajah cocok', ok: false },
+        ],
+        get statusText() {
+          if (this.state === 'idle') return 'Tekan tombol untuk memulai pemindaian wajah.';
+          if (this.state === 'scanning') return 'Memindai wajah, harap diam sejenak...';
+          return this.mode === 'in' ? 'Absen masuk berhasil dicatat!' : 'Absen keluar berhasil dicatat!';
+        },
+        start() {
+          if (this.scanning) return;
+          this.state = 'scanning';
+          this.scanning = true;
+          this.checks.forEach((c) => (c.ok = false));
+          // Animate scan line.
+          let dir = 1;
+          const lineTimer = setInterval(() => {
+            this.scanLine += dir * 4;
+            if (this.scanLine >= 100) dir = -1;
+            if (this.scanLine <= 0) dir = 1;
+          }, 40);
+          // Tick checks one by one.
+          [0, 1, 2].forEach((idx) => {
+            setTimeout(() => (this.checks[idx].ok = true), 700 * (idx + 1));
+          });
+          // Finish.
+          setTimeout(() => {
+            clearInterval(lineTimer);
+            this.scanning = false;
+            this.state = 'success';
+          }, 2600);
+        },
+      };
+    }
+  </script>
+</body>
+</html>

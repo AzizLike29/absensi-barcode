@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WinniPresence · Sistem Absensi Karyawan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="assets/js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="assets/css/app.css" />
+  <script src="assets/js/icons.js"></script>
+</head>
+<body class="h-full bg-slate-50 font-sans text-slate-800">
+  <!-- Top nav -->
+  <header class="sticky top-0 z-30 bg-white/80 backdrop-blur border-b border-slate-200">
+    <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-brand-600 text-white grid place-items-center font-bold">W</div>
+        <div class="leading-tight">
+          <p class="font-bold">WinniPresence</p>
+          <p class="text-[11px] text-slate-400">PT Winnicode Garuda Teknologi</p>
+        </div>
+      </div>
+      <a href="login.html" class="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold transition">Masuk</a>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="max-w-6xl mx-auto px-6 pt-16 pb-12 grid lg:grid-cols-2 gap-10 items-center">
+    <div>
+      <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-50 text-brand-700 text-xs font-medium">
+        Wireframe & Prototype Demo
+      </span>
+      <h1 class="mt-5 text-4xl sm:text-5xl font-extrabold leading-tight text-slate-900">
+        Sistem Informasi <span class="text-brand-600">Absensi Karyawan</span> modern.
+      </h1>
+      <p class="mt-5 text-slate-500 leading-relaxed max-w-lg">
+        Absensi berbasis pengenalan wajah dan validasi lokasi GPS, pengajuan cuti, hingga
+        rekap laporan untuk HR Admin — semuanya dalam satu aplikasi.
+      </p>
+      <div class="mt-7 flex flex-wrap gap-3">
+        <a href="login.html" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold shadow-soft transition">
+          Mulai Demo
+        </a>
+        <a href="dashboard.html" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-white transition">
+          Lihat Dashboard Karyawan
+        </a>
+      </div>
+      <div class="mt-8 flex items-center gap-6 text-sm text-slate-500">
+        <div><span class="block text-2xl font-bold text-slate-800">112</span> Karyawan</div>
+        <div><span class="block text-2xl font-bold text-slate-800">96%</span> Kehadiran</div>
+        <div><span class="block text-2xl font-bold text-slate-800">2</span> Lokasi</div>
+      </div>
+    </div>
+
+    <!-- Preview card -->
+    <div class="relative">
+      <div class="absolute -inset-4 bg-brand-200/30 blur-2xl rounded-3xl"></div>
+      <div class="relative rounded-3xl bg-white border border-slate-100 shadow-soft p-6">
+        <div class="flex items-center gap-3 pb-4 border-b border-slate-100">
+          <div class="w-10 h-10 rounded-full bg-brand-600 text-white grid place-items-center font-semibold">RP</div>
+          <div>
+            <p class="font-semibold text-slate-800">Rangga Pratama</p>
+            <p class="text-xs text-slate-400">Frontend Developer</p>
+          </div>
+          <span class="ml-auto inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium bg-emerald-50 text-emerald-700">Hadir</span>
+        </div>
+        <div class="py-5 flex flex-col items-center">
+          <div class="w-32 h-32 rounded-full bg-gradient-to-b from-slate-100 to-slate-200 grid place-items-center text-brand-500 scan-pulse" id="hero-face"></div>
+          <p class="mt-3 text-sm font-medium text-brand-600">Wajah & lokasi terverifikasi</p>
+        </div>
+        <div class="grid grid-cols-3 gap-2 text-center">
+          <div class="rounded-xl bg-slate-50 p-3"><p class="text-lg font-bold text-slate-800">08:02</p><p class="text-[11px] text-slate-400">Masuk</p></div>
+          <div class="rounded-xl bg-slate-50 p-3"><p class="text-lg font-bold text-slate-800">17:05</p><p class="text-[11px] text-slate-400">Keluar</p></div>
+          <div class="rounded-xl bg-slate-50 p-3"><p class="text-lg font-bold text-slate-800">9j</p><p class="text-[11px] text-slate-400">Durasi</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="max-w-6xl mx-auto px-6 py-12">
+    <h2 class="text-2xl font-bold text-slate-900 text-center">Fitur Utama</h2>
+    <p class="text-center text-slate-500 mt-2">Berdasarkan alur use case sistem absensi.</p>
+    <div class="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-5" id="feat-slot"></div>
+  </section>
+
+  <!-- Roles -->
+  <section class="max-w-6xl mx-auto px-6 py-12">
+    <div class="grid md:grid-cols-2 gap-6">
+      <a href="dashboard.html" class="group rounded-3xl bg-white border border-slate-100 shadow-card p-7 hover:shadow-soft transition">
+        <span class="w-12 h-12 rounded-2xl bg-brand-50 text-brand-600 grid place-items-center" id="role-emp"></span>
+        <h3 class="mt-4 text-lg font-bold text-slate-800">Portal Karyawan</h3>
+        <p class="mt-1 text-sm text-slate-500">Absen wajah, ajukan cuti/izin, lihat riwayat kehadiran, dan kelola profil.</p>
+        <span class="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-brand-600">Masuk sebagai Karyawan <span class="group-hover:translate-x-1 transition" id="arr1"></span></span>
+      </a>
+      <a href="admin-dashboard.html" class="group rounded-3xl bg-white border border-slate-100 shadow-card p-7 hover:shadow-soft transition">
+        <span class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 grid place-items-center" id="role-hr"></span>
+        <h3 class="mt-4 text-lg font-bold text-slate-800">Portal HR Admin</h3>
+        <p class="mt-1 text-sm text-slate-500">Kelola data karyawan, tentukan titik lokasi, verifikasi & cetak laporan rekap.</p>
+        <span class="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-emerald-600">Masuk sebagai HR Admin <span class="group-hover:translate-x-1 transition" id="arr2"></span></span>
+      </a>
+    </div>
+  </section>
+
+  <footer class="border-t border-slate-200 mt-8">
+    <div class="max-w-6xl mx-auto px-6 py-8 text-center text-sm text-slate-400">
+      © 2026 PT Winnicode Garuda Teknologi · Wireframe demo dibuat dengan HTML, Tailwind CSS & Alpine.js
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('hero-face').innerHTML = icon('camera', 'w-12 h-12');
+    document.getElementById('role-emp').innerHTML = icon('user', 'w-6 h-6');
+    document.getElementById('role-hr').innerHTML = icon('shield', 'w-6 h-6');
+    document.getElementById('arr1').innerHTML = icon('arrowRight', 'w-4 h-4');
+    document.getElementById('arr2').innerHTML = icon('arrowRight', 'w-4 h-4');
+
+    const feats = [
+      ['camera', 'Absensi Face Recognition', 'Pemindaian wajah memastikan kehadiran benar-benar dilakukan oleh karyawan bersangkutan.'],
+      ['pin', 'Validasi Lokasi GPS', 'Absensi hanya valid bila karyawan berada di dalam radius titik lokasi yang ditentukan.'],
+      ['shield', 'Verifikasi OTP', 'Keamanan login berlapis melalui kode OTP yang dikirim ke email karyawan.'],
+      ['document', 'Pengajuan Cuti & Izin', 'Ajukan cuti, izin, atau sakit lengkap dengan lampiran dan pantau statusnya.'],
+      ['history', 'Riwayat Absensi', 'Rekam jejak kehadiran harian dengan filter status dan ekspor data.'],
+      ['chart', 'Rekap & Laporan', 'HR Admin memverifikasi rekap dan mencetak laporan kehadiran per periode.'],
+    ];
+    document.getElementById('feat-slot').innerHTML = feats.map(([ic, title, desc]) => `
+      <div class="rounded-3xl bg-white border border-slate-100 shadow-card p-6 hover:shadow-soft transition">
+        <span class="w-11 h-11 rounded-2xl bg-brand-50 text-brand-600 grid place-items-center">${icon(ic, 'w-5 h-5')}</span>
+        <h3 class="mt-4 font-semibold text-slate-800">${title}</h3>
+        <p class="mt-1.5 text-sm text-slate-500 leading-relaxed">${desc}</p>
+      </div>`).join('');
+  </script>
+</body>
+</html>

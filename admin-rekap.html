@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rekap & Laporan · WinniPresence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="assets/js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="assets/css/app.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script src="assets/js/icons.js"></script>
+  <script src="assets/js/data.js"></script>
+</head>
+<body class="h-full bg-slate-50 font-sans text-slate-800" x-data="{ sidebarOpen: false }">
+  <div id="overlay-slot"></div>
+  <div id="sidebar-slot"></div>
+
+  <div class="lg:pl-72">
+    <div id="topbar-slot"></div>
+
+    <main class="p-4 sm:p-6 space-y-6" x-data="rekap()">
+      <!-- Filter bar -->
+      <section class="rounded-3xl bg-white border border-slate-100 shadow-card p-5">
+        <div class="flex flex-col lg:flex-row lg:items-end gap-4">
+          <div class="flex-1 grid sm:grid-cols-3 gap-3">
+            <div>
+              <label class="block text-xs font-medium text-slate-400 mb-1.5">Periode</label>
+              <input type="month" value="2026-05" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-100 outline-none" />
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-400 mb-1.5">Departemen</label>
+              <select x-model="dept" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-100 outline-none">
+                <option value="all">Semua Departemen</option>
+                <template x-for="d in depts" :key="d"><option :value="d" x-text="d"></option></template>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-400 mb-1.5">Status</label>
+              <select class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-100 outline-none">
+                <option>Semua</option><option>Terverifikasi</option><option>Belum diverifikasi</option>
+              </select>
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <button class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-medium text-slate-600 hover:bg-slate-50 transition">
+              <span x-html="icon('download','w-4 h-4')"></span> Excel
+            </button>
+            <button @click="printReport()" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold transition">
+              <span x-html="icon('document','w-4 h-4')"></span> Cetak Laporan
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Summary -->
+      <section class="grid grid-cols-2 lg:grid-cols-4 gap-4" id="rk-slot"></section>
+
+      <!-- Recap table -->
+      <section class="rounded-3xl bg-white border border-slate-100 shadow-card overflow-hidden">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+          <p class="font-semibold text-slate-800">Rekap Absensi — Mei 2026</p>
+          <span class="text-sm text-slate-400"><span x-text="rows.length"></span> baris</span>
+        </div>
+        <div class="overflow-x-auto scroll-thin">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="text-left text-slate-400 border-b border-slate-100">
+                <th class="px-6 py-3 font-medium">Karyawan</th>
+                <th class="px-6 py-3 font-medium">Departemen</th>
+                <th class="px-6 py-3 font-medium text-center">Hadir</th>
+                <th class="px-6 py-3 font-medium text-center">Telat</th>
+                <th class="px-6 py-3 font-medium text-center">Izin</th>
+                <th class="px-6 py-3 font-medium text-center">Alpha</th>
+                <th class="px-6 py-3 font-medium">Persentase</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-50">
+              <template x-for="r in rows" :key="r.nip">
+                <tr class="hover:bg-slate-50">
+                  <td class="px-6 py-3.5">
+                    <div class="flex items-center gap-3">
+                      <span class="w-9 h-9 rounded-full bg-brand-100 text-brand-700 grid place-items-center text-xs font-semibold" x-text="initials(r.name)"></span>
+                      <div>
+                        <p class="font-medium text-slate-700" x-text="r.name"></p>
+                        <p class="text-xs text-slate-400" x-text="r.nip"></p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-6 py-3.5 text-slate-500" x-text="r.dept"></td>
+                  <td class="px-6 py-3.5 text-center font-medium text-emerald-600" x-text="r.hadir"></td>
+                  <td class="px-6 py-3.5 text-center font-medium text-amber-600" x-text="r.telat"></td>
+                  <td class="px-6 py-3.5 text-center font-medium text-sky-600" x-text="r.izin"></td>
+                  <td class="px-6 py-3.5 text-center font-medium text-rose-600" x-text="r.alpha"></td>
+                  <td class="px-6 py-3.5">
+                    <div class="flex items-center gap-2">
+                      <div class="flex-1 h-2 rounded-full bg-slate-100 overflow-hidden max-w-[120px]">
+                        <div class="h-full rounded-full bg-brand-500" :style="`width:${r.pct}%`"></div>
+                      </div>
+                      <span class="text-xs font-semibold text-slate-600 tabular-nums" x-text="r.pct + '%'"></span>
+                    </div>
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="assets/js/layout.js"></script>
+  <script>
+    window.PAGE = { role: 'admin', active: 'rekap', title: 'Rekap & Laporan', subtitle: 'Verifikasi dan cetak laporan kehadiran' };
+    renderShell();
+
+    // Summary cards.
+    const rk = [
+      { icon: 'check', label: 'Rata-rata Kehadiran', value: '94%', color: 'emerald' },
+      { icon: 'clock', label: 'Total Keterlambatan', value: '38', color: 'amber' },
+      { icon: 'document', label: 'Izin & Sakit', value: '52', color: 'sky' },
+      { icon: 'shield', label: 'Sudah Diverifikasi', value: '108', color: 'brand' },
+    ];
+    const cmap = { emerald: 'bg-emerald-50 text-emerald-600', amber: 'bg-amber-50 text-amber-600', sky: 'bg-sky-50 text-sky-600', brand: 'bg-brand-50 text-brand-600' };
+    document.getElementById('rk-slot').innerHTML = rk.map(k => `
+      <div class="rounded-2xl bg-white border border-slate-100 p-5 shadow-card">
+        <span class="w-10 h-10 rounded-xl grid place-items-center ${cmap[k.color]}">${icon(k.icon, 'w-5 h-5')}</span>
+        <p class="mt-4 text-2xl font-bold text-slate-800">${k.value}</p>
+        <p class="text-xs text-slate-400 mt-0.5">${k.label}</p>
+      </div>`).join('');
+
+    function rekap() {
+      // Build a per-employee monthly recap from the mock employee list.
+      const base = APP.employees.map((e, i) => {
+        const hadir = 18 + ((i * 3) % 4);
+        const telat = (i % 3);
+        const izin = (i % 2) + 1;
+        const alpha = i % 4 === 0 ? 1 : 0;
+        const total = hadir + telat + izin + alpha;
+        const pct = Math.round(((hadir + telat) / total) * 100);
+        return { nip: e.nip, name: e.name, dept: e.dept, hadir, telat, izin, alpha, pct };
+      });
+      return {
+        all: base,
+        dept: 'all',
+        get depts() { return [...new Set(APP.employees.map(e => e.dept))]; },
+        get rows() { return this.dept === 'all' ? this.all : this.all.filter(r => r.dept === this.dept); },
+        initials(n) { return n.split(' ').map(w => w[0]).slice(0, 2).join(''); },
+        printReport() { window.print(); },
+      };
+    }
+  </script>
+</body>
+</html>

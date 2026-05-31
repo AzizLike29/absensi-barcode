@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verifikasi OTP · WinniPresence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="assets/js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="assets/css/app.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script src="assets/js/icons.js"></script>
+</head>
+<body class="h-full bg-slate-50 font-sans text-slate-800">
+  <div class="min-h-full flex items-center justify-center p-6">
+    <div class="w-full max-w-md bg-white rounded-3xl shadow-soft border border-slate-100 p-8" x-data="otpForm()">
+      <a href="login.html" class="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-700 mb-6">
+        <span id="i-back"></span> Kembali
+      </a>
+
+      <div class="w-14 h-14 rounded-2xl bg-brand-50 text-brand-600 grid place-items-center mb-5" id="i-mail"></div>
+      <h1 class="text-2xl font-bold text-slate-900">Verifikasi OTP</h1>
+      <p class="mt-2 text-sm text-slate-500 leading-relaxed">
+        Kami telah mengirim kode 6 digit ke email
+        <span class="font-medium text-slate-700">r***a@winnicode.com</span>.
+        Masukkan kode untuk melanjutkan.
+      </p>
+
+      <form class="mt-7" @submit.prevent="verify()">
+        <div class="flex justify-between gap-2" @paste="onPaste($event)">
+          <template x-for="(d, i) in digits" :key="i">
+            <input
+              :id="'otp-' + i"
+              x-model="digits[i]"
+              @input="onInput(i, $event)"
+              @keydown.backspace="onBackspace(i, $event)"
+              type="text" inputmode="numeric" maxlength="1"
+              class="w-12 h-14 text-center text-xl font-semibold rounded-xl border border-slate-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 outline-none transition" />
+          </template>
+        </div>
+
+        <p x-cloak x-show="error" class="mt-3 text-sm text-rose-600" x-text="error"></p>
+
+        <button type="submit"
+          class="mt-6 w-full py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold shadow-soft transition flex items-center justify-center">
+          <span x-show="!loading">Verifikasi</span>
+          <svg x-cloak x-show="loading" class="animate-spin w-5 h-5" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="3" class="opacity-25"/>
+            <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </form>
+
+      <div class="mt-6 text-center text-sm text-slate-500">
+        Tidak menerima kode?
+        <button @click="resend()" :disabled="cooldown > 0"
+          class="font-medium text-brand-600 disabled:text-slate-300">
+          <span x-show="cooldown === 0">Kirim ulang</span>
+          <span x-cloak x-show="cooldown > 0">Kirim ulang dalam <span x-text="cooldown"></span>s</span>
+        </button>
+      </div>
+      <p class="mt-4 text-center text-[11px] text-slate-400">Demo: gunakan kode 1 2 3 4 5 6</p>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('i-back').innerHTML = icon('arrowLeft', 'w-4 h-4');
+    document.getElementById('i-mail').innerHTML = icon('mail', 'w-7 h-7');
+
+    function otpForm() {
+      return {
+        digits: ['', '', '', '', '', ''],
+        loading: false,
+        error: '',
+        cooldown: 0,
+        onInput(i, e) {
+          const v = e.target.value.replace(/\D/g, '');
+          this.digits[i] = v.slice(-1);
+          if (this.digits[i] && i < 5) document.getElementById('otp-' + (i + 1)).focus();
+        },
+        onBackspace(i, e) {
+          if (!this.digits[i] && i > 0) document.getElementById('otp-' + (i - 1)).focus();
+        },
+        onPaste(e) {
+          e.preventDefault();
+          const text = (e.clipboardData.getData('text') || '').replace(/\D/g, '').slice(0, 6);
+          text.split('').forEach((c, i) => (this.digits[i] = c));
+          const next = Math.min(text.length, 5);
+          document.getElementById('otp-' + next).focus();
+        },
+        verify() {
+          this.error = '';
+          const code = this.digits.join('');
+          if (code.length < 6) {
+            this.error = 'Lengkapi 6 digit kode OTP.';
+            return;
+          }
+          this.loading = true;
+          setTimeout(() => {
+            if (code === '123456') {
+              window.location.href = 'dashboard.html';
+            } else {
+              this.loading = false;
+              this.error = 'Kode OTP salah. Coba lagi.';
+            }
+          }, 700);
+        },
+        resend() {
+          this.cooldown = 30;
+          const t = setInterval(() => {
+            this.cooldown--;
+            if (this.cooldown <= 0) clearInterval(t);
+          }, 1000);
+        },
+      };
+    }
+  </script>
+</body>
+</html>

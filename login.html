@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Masuk · WinniPresence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="assets/js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="assets/css/app.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script src="assets/js/icons.js"></script>
+</head>
+<body class="h-full bg-slate-50 font-sans text-slate-800">
+  <div class="min-h-full grid lg:grid-cols-2">
+    <!-- Left: brand / illustration -->
+    <div class="relative hidden lg:flex flex-col justify-between p-12 bg-brand-700 text-white overflow-hidden">
+      <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-brand-500/30 blur-2xl"></div>
+      <div class="absolute -bottom-32 -left-20 w-96 h-96 rounded-full bg-brand-400/20 blur-2xl"></div>
+      <div class="relative flex items-center gap-3">
+        <div class="w-11 h-11 rounded-2xl bg-white/15 backdrop-blur grid place-items-center text-xl font-bold">W</div>
+        <div>
+          <p class="font-bold text-lg leading-tight">WinniPresence</p>
+          <p class="text-xs text-brand-100">PT Winnicode Garuda Teknologi</p>
+        </div>
+      </div>
+      <div class="relative max-w-md">
+        <h2 class="text-3xl font-extrabold leading-snug">Absensi karyawan jadi lebih cepat, aman, dan akurat.</h2>
+        <p class="mt-4 text-brand-100 leading-relaxed">
+          Verifikasi wajah dan lokasi GPS memastikan kehadiran tercatat tepat waktu.
+          Ajukan cuti, pantau riwayat, dan kelola rekap dalam satu tempat.
+        </p>
+        <div class="mt-8 flex items-center gap-6 text-sm">
+          <div class="flex items-center gap-2">
+            <span class="w-9 h-9 rounded-xl bg-white/15 grid place-items-center" id="i-face"></span>
+            <span>Face Recognition</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="w-9 h-9 rounded-xl bg-white/15 grid place-items-center" id="i-gps"></span>
+            <span>Validasi GPS</span>
+          </div>
+        </div>
+      </div>
+      <p class="relative text-xs text-brand-200">© 2026 PT Winnicode Garuda Teknologi. Wireframe demo.</p>
+    </div>
+
+    <!-- Right: form -->
+    <div class="flex items-center justify-center p-6 sm:p-12">
+      <div class="w-full max-w-md" x-data="loginForm()">
+        <div class="lg:hidden flex items-center gap-3 mb-8">
+          <div class="w-10 h-10 rounded-xl bg-brand-600 text-white grid place-items-center font-bold">W</div>
+          <p class="font-bold text-lg">WinniPresence</p>
+        </div>
+
+        <h1 class="text-2xl font-bold text-slate-900">Selamat datang kembali</h1>
+        <p class="mt-1 text-sm text-slate-500">Masuk untuk melanjutkan ke dashboard absensi.</p>
+
+        <!-- Role switch -->
+        <div class="mt-6 grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-xl">
+          <button type="button" @click="role = 'karyawan'"
+            :class="role === 'karyawan' ? 'bg-white shadow-card text-brand-700' : 'text-slate-500'"
+            class="py-2 rounded-lg text-sm font-medium transition">Karyawan</button>
+          <button type="button" @click="role = 'admin'"
+            :class="role === 'admin' ? 'bg-white shadow-card text-brand-700' : 'text-slate-500'"
+            class="py-2 rounded-lg text-sm font-medium transition">HR Admin</button>
+        </div>
+
+        <form class="mt-6 space-y-4" @submit.prevent="submit()">
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1.5" x-text="role === 'admin' ? 'Username' : 'NIP / Username'"></label>
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" id="i-user"></span>
+              <input x-model="username" type="text" placeholder="Masukkan username"
+                class="w-full pl-10 pr-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-100 outline-none transition" />
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1.5">Password</label>
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" id="i-lock"></span>
+              <input x-model="password" :type="show ? 'text' : 'password'" placeholder="••••••••"
+                class="w-full pl-10 pr-12 py-2.5 rounded-xl border border-slate-200 text-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-100 outline-none transition" />
+              <button type="button" @click="show = !show" class="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium text-brand-600">
+                <span x-text="show ? 'Sembunyi' : 'Lihat'"></span>
+              </button>
+            </div>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <label class="flex items-center gap-2 text-slate-600">
+              <input type="checkbox" class="rounded border-slate-300 text-brand-600 focus:ring-brand-500" />
+              Ingat saya
+            </label>
+            <a href="#" class="font-medium text-brand-600 hover:text-brand-700">Lupa password?</a>
+          </div>
+
+          <p x-cloak x-show="error" class="text-sm text-rose-600 bg-rose-50 rounded-lg px-3 py-2" x-text="error"></p>
+
+          <button type="submit"
+            class="w-full py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold shadow-soft transition flex items-center justify-center gap-2">
+            <span x-show="!loading">Masuk</span>
+            <svg x-cloak x-show="loading" class="animate-spin w-5 h-5" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="3" class="opacity-25"/>
+              <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </form>
+
+        <p class="mt-6 text-xs text-center text-slate-400">
+          Karyawan akan diminta verifikasi OTP setelah login.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Decorative icons.
+    document.getElementById('i-face').innerHTML = icon('camera', 'w-5 h-5');
+    document.getElementById('i-gps').innerHTML = icon('pin', 'w-5 h-5');
+    document.getElementById('i-user').innerHTML = icon('user', 'w-5 h-5');
+    document.getElementById('i-lock').innerHTML = icon('lock', 'w-5 h-5');
+
+    function loginForm() {
+      return {
+        role: 'karyawan',
+        username: '',
+        password: '',
+        show: false,
+        loading: false,
+        error: '',
+        submit() {
+          this.error = '';
+          if (!this.username || !this.password) {
+            this.error = 'Username dan password wajib diisi.';
+            return;
+          }
+          this.loading = true;
+          // Simulated auth flow per use-case diagram.
+          setTimeout(() => {
+            if (this.role === 'karyawan') {
+              window.location.href = 'otp.html';
+            } else {
+              window.location.href = 'admin-dashboard.html';
+            }
+          }, 800);
+        },
+      };
+    }
+  </script>
+</body>
+</html>

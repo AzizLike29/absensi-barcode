@@ -1,0 +1,88 @@
+/* Small global helpers layered on top of Tailwind (Play CDN). */
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Hide content until Alpine has initialised to avoid flash of unstyled markup. */
+[x-cloak] {
+  display: none !important;
+}
+
+/* Thin, subtle scrollbar for sidebars and scroll areas. */
+.scroll-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.scroll-thin::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.35);
+  border-radius: 9999px;
+}
+.scroll-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Reusable sidebar link active/inactive states. */
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 0.875rem;
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #475569;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+.nav-link:hover {
+  background-color: #f1f5f9;
+  color: #1d40f5;
+}
+.nav-link.active {
+  background-color: #eef4ff;
+  color: #1d40f5;
+  font-weight: 600;
+}
+.nav-link.active svg {
+  color: #1d40f5;
+}
+
+/* Simple fade/slide used by Alpine transitions on cards. */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fade-up {
+  animation: fadeUp 0.35s ease both;
+}
+
+/* Pulsing ring used on the face-scan circle. */
+@keyframes scanPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(53, 99, 255, 0.45);
+  }
+  70% {
+    box-shadow: 0 0 0 18px rgba(53, 99, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(53, 99, 255, 0);
+  }
+}
+.scan-pulse {
+  animation: scanPulse 2s infinite;
+}

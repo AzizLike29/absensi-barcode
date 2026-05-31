@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard HR · WinniPresence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="assets/js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="assets/css/app.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script src="assets/js/icons.js"></script>
+  <script src="assets/js/data.js"></script>
+</head>
+<body class="h-full bg-slate-50 font-sans text-slate-800" x-data="{ sidebarOpen: false }">
+  <div id="overlay-slot"></div>
+  <div id="sidebar-slot"></div>
+
+  <div class="lg:pl-72">
+    <div id="topbar-slot"></div>
+
+    <main class="p-4 sm:p-6 space-y-6">
+      <!-- KPI stats -->
+      <section class="grid grid-cols-2 lg:grid-cols-4 gap-4" id="kpi-slot"></section>
+
+      <section class="grid lg:grid-cols-3 gap-6">
+        <!-- Weekly attendance bar chart (pure CSS) -->
+        <div class="lg:col-span-2 rounded-3xl bg-white border border-slate-100 shadow-card p-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="font-semibold text-slate-800">Kehadiran Mingguan</p>
+              <p class="text-sm text-slate-400">Persentase kehadiran 7 hari terakhir</p>
+            </div>
+            <span class="text-sm font-semibold text-emerald-600">+4.2%</span>
+          </div>
+          <div class="mt-8 flex items-end justify-between gap-3 h-48" id="chart-slot"></div>
+        </div>
+
+        <!-- Donut: composition -->
+        <div class="rounded-3xl bg-white border border-slate-100 shadow-card p-6">
+          <p class="font-semibold text-slate-800">Komposisi Hari Ini</p>
+          <div class="mt-5 flex items-center justify-center">
+            <div class="relative w-40 h-40">
+              <svg viewBox="0 0 36 36" class="w-full h-full -rotate-90">
+                <circle cx="18" cy="18" r="15.5" fill="none" stroke="#10b981" stroke-width="4" stroke-dasharray="78 22" stroke-dashoffset="0"/>
+                <circle cx="18" cy="18" r="15.5" fill="none" stroke="#f59e0b" stroke-width="4" stroke-dasharray="10 90" stroke-dashoffset="-78"/>
+                <circle cx="18" cy="18" r="15.5" fill="none" stroke="#0ea5e9" stroke-width="4" stroke-dasharray="8 92" stroke-dashoffset="-88"/>
+                <circle cx="18" cy="18" r="15.5" fill="none" stroke="#e11d48" stroke-width="4" stroke-dasharray="4 96" stroke-dashoffset="-96"/>
+              </svg>
+              <div class="absolute inset-0 grid place-items-center text-center">
+                <div><p class="text-2xl font-bold text-slate-800">112</p><p class="text-xs text-slate-400">karyawan</p></div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-5 space-y-2 text-sm" id="legend-slot"></div>
+        </div>
+      </section>
+
+      <!-- Pending verification queue (from flow: HR verifies recap) -->
+      <section class="rounded-3xl bg-white border border-slate-100 shadow-card overflow-hidden" x-data="adminVerify()">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+          <div>
+            <p class="font-semibold text-slate-800">Menunggu Verifikasi</p>
+            <p class="text-sm text-slate-400">Rekap absensi yang perlu Anda tinjau.</p>
+          </div>
+          <a href="admin-rekap.html" class="text-sm font-medium text-brand-600 hover:text-brand-700">Buka Rekap</a>
+        </div>
+        <div class="overflow-x-auto scroll-thin">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="text-left text-slate-400 border-b border-slate-100">
+                <th class="px-6 py-3 font-medium">Karyawan</th>
+                <th class="px-6 py-3 font-medium">Tanggal</th>
+                <th class="px-6 py-3 font-medium">Masuk</th>
+                <th class="px-6 py-3 font-medium">Keluar</th>
+                <th class="px-6 py-3 font-medium">Catatan</th>
+                <th class="px-6 py-3 font-medium text-right">Aksi</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-50">
+              <template x-for="r in queue" :key="r.nip">
+                <tr class="hover:bg-slate-50">
+                  <td class="px-6 py-3.5">
+                    <div class="flex items-center gap-3">
+                      <span class="w-9 h-9 rounded-full bg-brand-100 text-brand-700 grid place-items-center text-xs font-semibold" x-text="initials(r.name)"></span>
+                      <div>
+                        <p class="font-medium text-slate-700" x-text="r.name"></p>
+                        <p class="text-xs text-slate-400" x-text="r.nip"></p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-6 py-3.5 text-slate-500" x-text="fmtDate(r.date)"></td>
+                  <td class="px-6 py-3.5 tabular-nums text-slate-600" x-text="r.in"></td>
+                  <td class="px-6 py-3.5 tabular-nums text-slate-600" x-text="r.out"></td>
+                  <td class="px-6 py-3.5 text-slate-500" x-text="r.note"></td>
+                  <td class="px-6 py-3.5">
+                    <div class="flex items-center justify-end gap-2">
+                      <button @click="act(r, 'reject')" class="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-medium text-rose-600 hover:bg-rose-50">Tolak</button>
+                      <button @click="act(r, 'approve')" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium">Setujui</button>
+                    </div>
+                  </td>
+                </tr>
+              </template>
+              <tr x-show="queue.length === 0">
+                <td colspan="6" class="px-6 py-10 text-center text-slate-400">Semua rekap sudah diverifikasi 🎉</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="assets/js/layout.js"></script>
+  <script>
+    window.PAGE = { role: 'admin', active: 'dashboard', title: 'Dashboard HR', subtitle: 'Pantau kehadiran seluruh karyawan' };
+    renderShell();
+
+    // KPI cards.
+    const kpis = [
+      { icon: 'users', label: 'Total Karyawan', value: '112', color: 'brand' },
+      { icon: 'check', label: 'Hadir Hari Ini', value: '87', color: 'emerald' },
+      { icon: 'clock', label: 'Terlambat', value: '11', color: 'amber' },
+      { icon: 'document', label: 'Izin / Sakit', value: '9', color: 'sky' },
+    ];
+    const cmap = { brand: 'bg-brand-50 text-brand-600', emerald: 'bg-emerald-50 text-emerald-600', amber: 'bg-amber-50 text-amber-600', sky: 'bg-sky-50 text-sky-600' };
+    document.getElementById('kpi-slot').innerHTML = kpis.map(k => `
+      <div class="rounded-2xl bg-white border border-slate-100 p-5 shadow-card">
+        <span class="w-10 h-10 rounded-xl grid place-items-center ${cmap[k.color]}">${icon(k.icon, 'w-5 h-5')}</span>
+        <p class="mt-4 text-2xl font-bold text-slate-800">${k.value}</p>
+        <p class="text-xs text-slate-400 mt-0.5">${k.label}</p>
+      </div>`).join('');
+
+    // Weekly bar chart.
+    const week = [{ d: 'Sen', v: 92 }, { d: 'Sel', v: 88 }, { d: 'Rab', v: 95 }, { d: 'Kam', v: 90 }, { d: 'Jum', v: 78 }, { d: 'Sab', v: 40 }, { d: 'Min', v: 12 }];
+    document.getElementById('chart-slot').innerHTML = week.map(w => `
+      <div class="flex-1 flex flex-col items-center gap-2 group">
+        <div class="w-full flex items-end justify-center h-40">
+          <div class="w-7 sm:w-9 rounded-t-lg bg-brand-500 group-hover:bg-brand-600 transition relative" style="height:${w.v}%">
+            <span class="absolute -top-6 left-1/2 -translate-x-1/2 text-[11px] font-semibold text-slate-500 opacity-0 group-hover:opacity-100 transition">${w.v}%</span>
+          </div>
+        </div>
+        <span class="text-xs text-slate-400">${w.d}</span>
+      </div>`).join('');
+
+    // Donut legend.
+    const legend = [
+      { label: 'Hadir', value: '87', color: 'bg-emerald-500' },
+      { label: 'Terlambat', value: '11', color: 'bg-amber-500' },
+      { label: 'Izin/Sakit', value: '9', color: 'bg-sky-500' },
+      { label: 'Alpha', value: '5', color: 'bg-rose-500' },
+    ];
+    document.getElementById('legend-slot').innerHTML = legend.map(l => `
+      <div class="flex items-center justify-between">
+        <span class="flex items-center gap-2 text-slate-500"><span class="w-2.5 h-2.5 rounded-full ${l.color}"></span>${l.label}</span>
+        <span class="font-semibold text-slate-700">${l.value}</span>
+      </div>`).join('');
+
+    function adminVerify() {
+      return {
+        queue: JSON.parse(JSON.stringify(APP.pendingRecaps)),
+        initials(n) { return n.split(' ').map(w => w[0]).slice(0, 2).join(''); },
+        act(r) { this.queue = this.queue.filter(q => q.nip !== r.nip); },
+      };
+    }
+  </script>
+</body>
+</html>
