@@ -45,7 +45,7 @@ function renderShell() {
              transition-transform duration-200 lg:translate-x-0"
       :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
       <div class="h-16 flex items-center gap-3 px-6 border-b border-slate-100">
-        <div class="w-9 h-9 rounded-xl bg-brand-600 text-white grid place-items-center font-bold shadow-soft">W</div>
+        <div class="w-9 h-9 rounded-xl bg-brand-600 grid place-items-center shadow-soft overflow-hidden"><img src="assets/icon/barcode-scan.png" alt="Logo" class="w-6 h-6 object-contain" /></div>
         <div class="leading-tight">
           <p class="font-semibold text-slate-800">${APP.appName}</p>
           <p class="text-[11px] text-slate-400">Sistem Absensi Karyawan</p>
