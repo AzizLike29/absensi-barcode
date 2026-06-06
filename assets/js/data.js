@@ -4,14 +4,14 @@ const APP = {
   appName: 'WinniPresence',
   // Logged-in employee (demo).
   currentUser: {
-    name: 'Rangga Pratama',
+    name: 'Desta Ayu Melinda',
     nip: '2024.08.0142',
-    role: 'Frontend Developer',
+    role: 'Fullstack Developer',
     department: 'Engineering',
-    email: 'rangga.pratama@winnicode.com',
+    email: 'destaayumelinda2711@gmail.com',
     phone: '0812-3456-7890',
     status: 'Karyawan Tetap',
-    avatar: 'RP',
+    avatar: 'DA',
     joinDate: '12 Agustus 2022',
   },
   // Today's attendance snapshot.
@@ -42,7 +42,7 @@ const APP = {
   ],
   // Employees managed by HR Admin.
   employees: [
-    { nip: '2024.08.0142', name: 'Rangga Pratama', dept: 'Engineering', role: 'Frontend Developer', status: 'Tetap', present: true },
+    { nip: '2024.08.0142', name: 'Desta Ayu Melinda', dept: 'Engineering', role: 'Fullstack Developer', status: 'Tetap', present: true },
     { nip: '2024.03.0098', name: 'Salsabila Putri', dept: 'Design', role: 'UI/UX Designer', status: 'Tetap', present: true },
     { nip: '2023.11.0076', name: 'Bagas Nugroho', dept: 'Engineering', role: 'Backend Developer', status: 'Tetap', present: false },
     { nip: '2025.01.0210', name: 'Citra Lestari', dept: 'Marketing', role: 'Content Strategist', status: 'Kontrak', present: true },
@@ -53,7 +53,7 @@ const APP = {
   ],
   // HR Admin pending verification queue.
   pendingRecaps: [
-    { nip: '2024.08.0142', name: 'Rangga Pratama', date: '2026-05-29', in: '07:58', out: '17:05', note: 'Lokasi & wajah valid' },
+    { nip: '2024.08.0142', name: 'Desta Ayu Melinda', date: '2026-05-29', in: '07:58', out: '17:05', note: 'Lokasi & wajah valid' },
     { nip: '2024.03.0098', name: 'Salsabila Putri', date: '2026-05-29', in: '08:21', out: '17:11', note: 'Terlambat 21 menit' },
     { nip: '2025.01.0210', name: 'Citra Lestari', date: '2026-05-29', in: '07:46', out: '16:58', note: 'Lokasi & wajah valid' },
   ],
