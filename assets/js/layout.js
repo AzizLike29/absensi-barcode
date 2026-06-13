@@ -36,7 +36,7 @@ function renderShell() {
   const role = page.role;
   const roleLabel = role === 'admin' ? 'HR Admin' : 'Karyawan';
   const user = role === 'admin'
-    ? { name: 'Dewi Anggraini', role: 'HR Admin', avatar: 'DA' }
+    ? { name: 'Desta Melinda', role: 'HR Admin', avatar: 'DA' }
     : { name: APP.currentUser.name, role: APP.currentUser.role, avatar: APP.currentUser.avatar };
 
   const sidebar = `
@@ -90,8 +90,8 @@ function renderShell() {
              class="absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-soft border border-slate-100 p-2">
           <p class="px-3 py-2 text-sm font-semibold text-slate-700">Notifikasi</p>
           ${APP.notifications
-            .map(
-              (n) => `
+      .map(
+        (n) => `
             <div class="flex gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50">
               <span class="mt-1 w-2 h-2 rounded-full ${n.unread ? 'bg-brand-500' : 'bg-slate-200'}"></span>
               <div>
@@ -100,8 +100,8 @@ function renderShell() {
                 <p class="text-[11px] text-slate-300 mt-0.5">${n.time}</p>
               </div>
             </div>`
-            )
-            .join('')}
+      )
+      .join('')}
         </div>
       </div>
       <div class="w-9 h-9 rounded-full bg-brand-600 text-white grid place-items-center text-sm font-semibold">${user.avatar}</div>

@@ -20,7 +20,7 @@ const APP = {
     checkOut: '--:--',
     status: 'Hadir',
     workHours: '—',
-    location: 'Kantor Pusat - Jakarta',
+    location: 'Kantor Pusat - Bandung',
     shift: '08:00 - 17:00',
   },
   // Employee attendance history.
